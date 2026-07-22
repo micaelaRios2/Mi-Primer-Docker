@@ -1,0 +1,28 @@
+name: Construir Imagen de Docker
+
+# 1. Evento que dispara el pipeline
+on:
+  push:
+    branches: [ "main" ]
+
+# 2. Los trabajos (jobs) que se van a ejecutar
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Paso A: Descargar el código del repositorio en la máquina virtual
+    - name: Descargar código fuente
+      uses: actions/checkout@v4
+
+    # Paso B: Probar que la imagen de Docker se construye correctamente
+    - name: Construir la imagen de Docker
+      run: |
+        docker build -t mi-web:latest .
+
+    # Paso C: Verificar que el contenedor inicia bien
+    - name: Probar ejecucion del contenedor
+      run: |
+        docker run -d -p 8080:80 --name test-app mi-web:latest
+        sleep 3
+        curl -f http://localhost:8080 || exit 1
