@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: mi_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: app_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    container_name: gestor_adminer
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres-db
+
+  # ¡Nuevo servicio agregado en la rama!
+  redis-cache:
+    image: redis:alpine
+    container_name: mi_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  db_data:
